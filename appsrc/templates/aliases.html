@@ -15,7 +15,7 @@
                         <tbody>
                             {% for r in aliases %}
                             <tr>
-                                <td><a href="javascript:void(0)" class="alink" onclick="domains.getDomain(this.id);" id="{{r[0]}}">{{ r[2] }}</a></td>
+                                <td><a href="javascript:void(0)" class="alink" onclick="alias.getAlias(this.id);" id="{{r[0]}}">{{ r[2] }}</a></td>
                                 <td> ==> </td>
                                 <td> {{r[3]}} </td>
                             </tr>
@@ -31,21 +31,22 @@
         </div>
         <div class="col-sm-5">
             <div class="cardc hide" id="form_alias">
-                <form action="/savealias" method="POST" class="" onsubmit="alias.submit();">
+                <form action="/savealias" method="POST" class="" onsubmit="alias.submit();" id="alias_form">
+                    <input type="hidden" name="id" id="id" value="0"> 
+                    <!-- <input type="hidden" name="domain_id" id="domain_id" value="0"> -->
+                    <input type="hidden" name="_method" id="_method" value="POST" />
                     <div class="bodyc">
                         <div class="form-group" style="margin-bottom: 10px;">
                             <label for="seldomain">Domain</label>
                             <select id="seldomain" class="form-control" name="domain_id" onchange="alias.DomainChange(this.value);"></select>
                             <hr>
                         </div>
-                         <input type="hidden" name="id" id="id" value="0"> 
-                         <input type="hidden" name="domain_id" id="domain_id" value="0"> 
 
                         <div class="form-group">
-                            <label for="email" >Source Email Address</label>
+                            <label for="source" >Source Email Address</label>
                             <div class="input-group mb-2 mr-sm-2 mb-sm-0">
                                 
-                                <input type="text" id="email" name="email" class="form-control" placeholder="email without the domain">
+                                <input type="text" id="source" name="source" class="form-control" placeholder="email without the domain">
                                 <div class="input-group-addon">@</div>
                                 <div class="input-group-addon" id="emaildomain">-------</div>
                             </div>
@@ -60,8 +61,8 @@
 
                     <div class="d-flex flex-row-reverse litgrey">
                         <div class="p-3"><input type="submit" class="btn btn-primary " value="Save"></div>
-                        <div class="p-3"><input type="reset" class="btn btn-warning " onclick="emails.clear();" value="Cancel"></div>
-                        <div class="p-3"><button type="button" class="btn btn-danger" onclick="emails.delEmail();" >Delete</button></div>
+                        <div class="p-3"><input type="reset" class="btn btn-warning " onclick="alias.clear();" value="Cancel"></div>
+                        <div class="p-3"><button type="button" class="btn btn-danger" onclick="alias.delAlias();" >Delete</button></div>
                     </div>
                 </form>
 

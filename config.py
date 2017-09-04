@@ -21,6 +21,7 @@ class Config(object):
     MYSQL_DATABASE_DB = 'mailserver'
     MYSQL_DATABASE_HOST = 'localhost'
     ADMIN_PASSWORD = "$6$badc0e555cfbaf04$NT8vbUdLGed6jT6oDn75W33ho.aHf.1JU95Vior1mxxoKlQe/htpto62n58UvQt0TkR/ySeKc0qury8UlrPSP0"
+    ADMIN_USER = "admin"
 
 class ProductionConfig(Config):
     DEBUG = False

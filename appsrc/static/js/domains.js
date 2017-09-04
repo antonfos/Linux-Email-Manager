@@ -2,7 +2,7 @@ var domains;
 $(document).ready(function () {
     domains = {
         _init: false,
-        domainValidate : /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/ ,
+        domainValidate: /^[a-zA-Z0-9][a-zA-Z0-9-]{1,61}[a-zA-Z0-9](?:\.[a-zA-Z]{2,})+$/,
         init: function () {
             if (this._init) return;
             this.bind(function () {
@@ -21,18 +21,18 @@ $(document).ready(function () {
             GetDomain: "/domain/id/",   // {id}
             SaveDomain: "",
             DeleteDomain: "",
-            formdomain : "#form_domain"
+            formdomain: "#form_domain"
         }
     };
 
-    domains.getDomain = function(id){
+    domains.getDomain = function (id) {
         log.d("Get Domain ", id);
         $.ajax({
-            url: domains.settings.GetDomain+id,
+            url: domains.settings.GetDomain + id,
             dataType: "json",
             // data: $('form').serialize(),
             type: 'GET',
-            success: function(response) {
+            success: function (response) {
                 //response = JSON.parse(response);
                 log.d("Response : ", response.data[0]);
                 ShowForm(true)
@@ -40,63 +40,64 @@ $(document).ready(function () {
                 $('#domain').val(response.data[0][1]);
                 setValidation();
             },
-            error: function(error) {
+            error: function (error) {
                 console.log(error);
             }
         });
     };
 
-    domains.delDomain = function(){
+    domains.delDomain = function () {
         if ($('#id').val() === "0") return;
-        r = confirm("Confirm delete of this domain "+$('#domain').val()+" and all its email addresses");
-        if (r){
-            $('#_method').val("DELETE");
-            domains.submit();
-            //window.location.replace("/managedomains");
-            //window.location.href = "/managedomains";
-            //$(location).attr('href','/managedomains');
-        }
-        ShowForm(false);
+        var msg = "Confirm delete of this domain <strong>" + $('#domain').val() + "</strong> and all its email addresses";
+        bootbox.confirm(msg, function (r) {
+            if (r) {
+                $('#_method').val("DELETE");
+                domains.submit();
+            } else {
+                resetForm()
+                ShowForm(false);
+            }
+        });
     }
 
-     domains.newDomain = function(){
-         ShowForm();
-         resetForm();
-         ShowForm(true);
-         $('#domain').focus();
-         setValidation();
-     };
+    domains.newDomain = function () {
+        ShowForm();
+        resetForm();
+        ShowForm(true);
+        $('#domain').focus();
+        setValidation();
+    };
 
-     domains.submit = function(){
-        if ( $('#_domain_form').valid() ){
-            log.d( $('#_domain_form').serialize() )
+    domains.submit = function () {
+        if ($('#_domain_form').valid()) {
+            log.d($('#_domain_form').serialize())
             $('#_domain_form').submit();
             ShowForm(false);
         }
-     };
+    };
 
-     domains.clear = function(){
-         ShowForm(false);
-     };
+    domains.clear = function () {
+        ShowForm(false);
+    };
 
     domains.init();
 
-    function resetForm(){
+    function resetForm() {
         $('#id').val("0");
         $('#domain').val("");
     }
 
-    function ShowForm(s){
+    function ShowForm(s) {
         (s) ? $(domains.settings.formdomain).removeClass('hide') : $(domains.settings.formdomain).addClass('hide');
     }
 
-    jQuery.validator.addMethod("vdomain", function(value, element) {
+    jQuery.validator.addMethod("vdomain", function (value, element) {
         return this.optional(element) || domains.domainValidate.test(value);
     }, "Please specify a vaild domain");
 
     function setValidation() {
-        $.validator.setDefaults({debug: false});
-        
+        $.validator.setDefaults({ debug: false });
+
         $('#_domain_form').validate({
             rules: {
                 ignore: ':not(select:hidden, input:visible, textarea:visible)',

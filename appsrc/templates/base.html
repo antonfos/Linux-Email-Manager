@@ -30,13 +30,13 @@
             <div class="row" style="padding: 8px;">
                 <div class="col-sm-4"><h3 class="text-muted">Email Manager</h3></div>
                 {% if session['authenticated']  %}
-                <div class="col-sm-2 text-right"><a href="/managedomains" class="btn btn-info">Domains</a></div>
-                <div class="col-sm-2 text-right"><a href="/emails" class="btn btn-info">Emails</a></div>
-                <div class="col-sm-2 text-right"><a href="/aliases" class="btn btn-info">Aliases</a></div>
+                <div class="col-sm-2 text-right"><a href="/managedomains" class="btn btn-outline-primary btn-sm">Domains</a></div>
+                <div class="col-sm-2 text-right"><a href="/emails" class="btn btn-outline-primary btn-sm">Emails</a></div>
+                <div class="col-sm-2 text-right"><a href="/aliases" class="btn btn-outline-primary btn-sm">Aliases</a></div>
 
-                <div class="col-sm-2 text-right"><a href="/logout" class="btn btn-danger">Sign Out</a></div>
+                <div class="col-sm-2 text-right"><a href="/logout" class="btn btn-outline-danger btn-sm">Sign Out</a></div>
                 {% else %}
-                <div class="col-sm-8 text-right"><a href="/login" class="btn btn-info">Sign In</a></div>
+                <div class="col-sm-8 text-right"><a href="/login" class="btn btn-outline-success btn-sm">Sign In</a></div>
                 {% endif %}
             </div>
         <hr>

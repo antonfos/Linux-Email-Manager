@@ -41,9 +41,6 @@ $(document).ready(function () {
                 $('#email_form').submit();
             }
         });
-        // ResetForm();
-        // emails.curemail = {};
-        // ShowForm(false);
     };
 
     emails.setDomain = function (value) {
@@ -64,17 +61,12 @@ $(document).ready(function () {
         $.ajax({
             url: url,
             dataType: "json",
-            // data: $('form').serialize(),ee
             type: 'GET',
             success: function (response) {
-                //response = JSON.parse(response);
                 if (response.data !== null && response.status) {
                     log.d("Response : ", response.data);
                     emails.addresses = response.data;
                     PopulateEmailList();
-                    // ShowForm(true)
-                    // $('#id').val(response.data[0][0]);
-                    // $('#domain').val(response.data[0][1]);
                 }
             },
             error: function (error) {
@@ -86,18 +78,13 @@ $(document).ready(function () {
     emails.getEmail = function (id) {
         ResetForm();
         $('#_method').val("POST");
-        log.d("Email Selected ", id);
         var url = "/emails/" + id 
-        log.d("Get Email id Selected url ", url);
         $.ajax({
             url: url,
             dataType: "json",
-            // data: $('form').serialize(),
             type: 'GET',
             success: function (response) {
-                //response = JSON.parse(response);
                 if (response.data !== null && response.status) {
-                    log.d("Response : ", response.data[0]);
                     emails.curemail = response.data[0];
                     var email_split = emails.curemail[2].split("@");
                     log.d("Email Split ", email_split);
@@ -110,16 +97,11 @@ $(document).ready(function () {
                     $('#emaildomain').empty().html( email_split[1] )
                     $('#passwd').val("");
                     getDomainName(emails.curemail[1], function(domain){
-                        log.d("Found Domain : ", domain);
                         if (domain){
                             emails.seldomainname = domain;
                             emails.seldomain = emails.curemail[1];
                         }
                     })
-
-                    // ShowForm(true)
-                    // $('#id').val(response.data[0][0]);
-                    // $('#domain').val(response.data[0][1]);
                 }
             },
             error: function (error) {
@@ -167,7 +149,6 @@ $(document).ready(function () {
 
     function PopulateEmailList(){
         tbl = $('#emaillist').empty();
-        //tbl.append("<option value='0'>All</option>");
         $.each(emails.addresses, function(k,v){
             tbl.append('<tr><td><a href="javascript:void(0)" class="alink" onclick="emails.getEmail(this.id);" id="'+v[0]+'">'+v[3]+'</a></td></tr>');
         });
@@ -184,12 +165,10 @@ $(document).ready(function () {
         $.ajax({
             url: url,
             dataType: "json",
-            // data: $('form').serialize(),
             type: 'GET',
             success: function(r) {
                 if (r.data !== null && r.status) {
                 log.d("Domains : ", r.data);
-                // emails.domains = r.data;
                 if (typeof cb === "function")
                     cb(r.data);
                 }
@@ -204,7 +183,7 @@ $(document).ready(function () {
 
     function checkIsAddAvailable(){
         if ( parseInt(emails.seldomain) === 0 || email.seldomainname === "" ){
-            alert("You must select a domain above before you can add an email account!");
+            bootbox.alert("You must select a domain above before you can add an email account!");
             return false;
         }
         return true;

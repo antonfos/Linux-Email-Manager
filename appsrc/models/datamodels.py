@@ -27,21 +27,20 @@ class virtual_domains:
     def __init__(self):
         self.db = mysql.connector.connect(**dbconfig)
         self.con = self.db.cursor()
-        logger.debug("[virtual_domains::__init__] INIT" )
 
-    def getDomains(self, order = None, where = None):
+    def getDomains(self, order=None, where=None):
         try:
             query = "SELECT `id`, `name`  FROM `%s` " % self.table
-            if (where):
-                query = query + " WHERE %s " % where 
-            if (order):
-                query = query + " ORDER BY `%s` " % order 
+            if where:
+                query = query + " WHERE %s " % where
 
-            #logger.debug("[virtual_domains::getDomains] Query : %s " % query)
-            self.con.execute(query)    
-            return self.con.fetchall()    
+            if order:
+                query = query + " ORDER BY `%s` " % order
+
+            self.con.execute(query)
+            return self.con.fetchall()
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::getDomains] failed %s" % str(e))
+            logger.error("[virtual_domains::getDomains] failed %s" % str(e))
             return []
 
 
@@ -59,7 +58,7 @@ class virtual_domains:
             self.db.commit()
             return dom_id
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::Insert] failed %s" % str(e))
+            logger.error("[virtual_domains::Insert] failed %s" % str(e))
             return None
        
     def Update(self, did, domain):
@@ -71,11 +70,11 @@ class virtual_domains:
             self.db.commit()
             return did
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::Update] failed %s" % str(e))
+            logger.error("[virtual_domains::Update] failed %s" % str(e))
             return None
 
     def Delete(self, domain_id):
-        logger.debug("[virtual_domains::Delete] Domain Id : %d " % domain_id)
+        # logger.debug("[virtual_domains::Delete] Domain Id : %d " % domain_id)
         vuser = virtual_users()
         hasEmails = vuser.DomainHasEmails(domain_id)
         if hasEmails > 0:
@@ -83,12 +82,12 @@ class virtual_domains:
 
         try:
             query = "DELETE FROM `%s` WHERE `id` = %d" % (self.table, domain_id)
-            logger.debug("[virtual_domains::Delete] Query : %s " % query)
+            # logger.debug("[virtual_domains::Delete] Query : %s " % query)
             self.con.execute(query)
             self.db.commit()
             return 0
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::Delete] failed %s" % str(e))
+            logger.error("[virtual_domains::Delete] failed %s" % str(e))
             return None
 
 
@@ -96,7 +95,6 @@ class virtual_domains:
     def checkDuplicatedomain(self, domain_name):
         # check for an existing email
         logger.debug("[virtual_domains::checkDuplicateEmail] name %s " % domain_name)
-        #query = "SELECT `id`, `email` FROM `virtual_users` WHERE `email` = '%s' " % email
         query = "SELECT count(*) as `cnt` FROM `%s` WHERE `name` = '%s' " % (self.table, domain_name)
         try:
             logger.debug("[virtual_domains::checkDuplicateEmail] Query : %s" % query)
@@ -107,7 +105,7 @@ class virtual_domains:
                 return False
             return True
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::checkDuplicateEmail] failed %s" % str(e))
+            logger.error("[virtual_domains::checkDuplicateEmail] failed %s" % str(e))
             return False
 
     def FetchDomain(self, domain_id, order):
@@ -129,7 +127,7 @@ class virtual_domains:
             return res
             
         except mysql.connector.Error as e:
-            logger.debug("[virtual_domains::FetchDomain] failed %s" % str(e))
+            logger.error("[virtual_domains::FetchDomain] failed %s" % str(e))
             return None
 
     
@@ -151,21 +149,20 @@ class virtual_users:
     def __init__(self):
         self.db = mysql.connector.connect(**dbconfig)
         self.con = self.db.cursor()
-        logger.debug("[virtual_users::__init__] INIT" )
 
-    def getUsers(self, order = None, where = None):
+    def getUsers(self, order=None, where=None):
         try:
             query = "SELECT `id`, `domain_id`, `email`, `name`  FROM `%s` " % self.table
-            if (where):
+            if where:
                 query = query + " WHERE %s " % where 
-            if (order):
+            if order:
                 query = query + " ORDER BY `%s` " % order 
 
             #logger.debug("[virtual_users::getUsers] Query : %s " % query)
             self.con.execute(query)    
             return self.con.fetchall()    
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::getUsers] failed %s" % str(e))
+            logger.error("[virtual_users::getUsers] failed %s" % str(e))
             return []
     
 
@@ -173,11 +170,12 @@ class virtual_users:
         logger.debug("[virtual_users::Insert] Domain_id : %s , emailname: %s , username: %s, password: %s" % (domain_id, emailname, username, password))
         # Insert a new record
         email = self.BuildEmailAddress(domain_id, emailname)
-        logger.debug("[virtual_users::Insert] EMail Address %s " % email)
 
-        logger.debug("[virtual_users::Insert] Is the email not duplicate %s" % self.checkDuplicateEmail(email))
-        
-        if not email or self.checkDuplicateEmail(email) > 0:
+        dupemail = self.checkDuplicateEmail(email)
+
+        logger.debug("[virtual_users::Insert] EMail Address %s , duplcates %s" % (email, dupemail))
+
+        if not email or dupemail > 0:
             return -1
         
         if password:
@@ -190,9 +188,11 @@ class virtual_users:
             self.db.commit()
             return dom_id
 
+        return -1
+
        
     def Update(self, eid, name, password):
-        logger.debug("[virtual_users::Update] email user : %s with ID %s , password %s" % (eid, eid, password))
+        # logger.debug("[virtual_users::Update] email user : %s with ID %s , password %s" % (eid, eid, password))
         try:
             if (password):
                 pwdset = pwdutil()
@@ -211,7 +211,7 @@ class virtual_users:
             self.db.commit()
             return eid
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::Update] failed %s" % str(e))
+            logger.error("[virtual_users::Update] failed %s" % str(e))
             # print "Error code:", e.errno        # error number
             # print "SQLSTATE value:", e.sqlstate # SQLSTATE value
             # print "Error message:", e.msg       # error message
@@ -224,50 +224,45 @@ class virtual_users:
 
     def checkDuplicateEmail(self, email):
         # check for an existing email
-        logger.debug("[virtual_users::checkDuplicateEmail] email %s " % email)
-        #query = "SELECT `id`, `email` FROM `virtual_users` WHERE `email` = '%s' " % email
-        #query = "SELECT count(*) as `cnt` FROM `%s` WHERE `email` = '%s' " % (self.table, email)
+        # logger.debug("[virtual_users::checkDuplicateEmail] email %s " % email)
         query = "SELECT id FROM `%s` WHERE `email` = '%s' " % (self.table, email)
         try:
-            logger.debug("[virtual_users::checkDuplicateEmail] Query : %s" % query)
+            # logger.debug("[virtual_users::checkDuplicateEmail] Query : %s" % query)
             self.con.execute(query)
             s = self.con.fetchall()
             numrows = len(s)
-            logger.debug("[virtual_users::checkDuplicateEmail] rowcount %s" % numrows)
-            return numrows
+
+            valias = virtual_aliases()
+            dupalias = valias.DuplicateAlias(email)
+
+            # logger.debug("[virtual_users::checkDuplicateEmail] rowcount %s, Aliases %s " % (numrows,dupalias))
+            return numrows + dupalias
 
         except mysql.connector.Error as e:
-            # print "Error code:", e.errno        # error number
-            # print "SQLSTATE value:", e.sqlstate # SQLSTATE value
-            # print "Error message:", e.msg       # error message
-            # print "Error:", e                   # errno, sqlstate, msg values
-            # s = str(e)
-            # print "Error:", s                   # errno, sqlstate, msg values
-            logger.debug("[virtual_users::checkDuplicateEmail] failed : %s" % str(e))
+            logger.error("[virtual_users::checkDuplicateEmail] failed : %s" % str(e))
             return False
 
     def DomainHasEmails(self, domain_id):
         # check for an existing email
-        logger.debug("[virtual_users::DomainHasEmails] domain_id %s " % domain_id)
+        # logger.debug("[virtual_users::DomainHasEmails] domain_id %s " % domain_id)
         query = "SELECT count(*) as `cnt` FROM `%s` WHERE `domain_id` = %s " % (self.table, domain_id)
         try:
-            logger.debug("[virtual_users::DomainHasEmails] Query : %s" % query)
+            # logger.debug("[virtual_users::DomainHasEmails] Query : %s" % query)
             self.con.execute(query)
-            logger.debug("[virtual_users::DomainHasEmails] 2")
             res = self.con.fetchall()
-            logger.debug("[virtual_users::DomainHasEmails] result %s " % res)
+            # logger.debug("[virtual_users::DomainHasEmails] result %s " % res)
             if res[0][0] > 0:
                 return res[0][0]
             return 0
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::DomainHasEmails] failed %s" % str(e))
+            logger.error("[virtual_users::DomainHasEmails] failed %s" % str(e))
             return 0
         
 
     def BuildEmailAddress(self, domain_id, emailname):
         # Build an email address
         domain = self.getDomain(domain_id)
-        logger.debug("[virtual_users::BuildEmailAddress] domain %s" % domain)
+        # logger.debug("[virtual_users::BuildEmailAddress] domain %s" % domain)
         if domain :
             return emailname+"@"+domain[0][1]
         return None
@@ -279,45 +274,67 @@ class virtual_users:
         return domain
 
     def emailsByDomain(self, domain_id):
-        logger.debug("[virtual_users::emailsByDomain] domain_id %s " % domain_id)
+        # logger.debug("[virtual_users::emailsByDomain] domain_id %s " % domain_id)
         query = "SELECT `id`, `domain_id`, `email`, `name` FROM `%s` WHERE `domain_id` = %s " % (self.table, domain_id)
         try:
-            logger.debug("[virtual_users::emailsByDomain] Query : %s" % query)
+            # logger.debug("[virtual_users::emailsByDomain] Query : %s" % query)
             self.con.execute(query)
             res = self.con.fetchall()
-            logger.debug("[virtual_users::emailsByDomain] result %s " % res)
+            # logger.debug("[virtual_users::emailsByDomain] result %s " % res)
             return res
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::emailsByDomain] failed %s" % str(e))
+            logger.error("[virtual_users::emailsByDomain] failed %s" % str(e))
             return []
 
 
     def Delete(self, email_id):
-        logger.debug("[virtual_users::Delete] email Id : %d " % email_id)
+        # logger.debug("[virtual_users::Delete] email Id : %d " % email_id)
         vuser = virtual_users()
-        
+        valias = virtual_aliases()
+
+        email_address = self.getUsers(None, " id = %d " % email_id)
+        # logger.debug( "[virtual_users::Delete] Email Address : %s " % email_address )
+
+        hasAlias = valias.EmailHasAlias(email_address[0][2])
+        # logger.debug("[virtual_users::Delete] Email is linked to an alias : %s " % hasAlias)
+        if (hasAlias > 0):
+            return hasAlias
+
         try:
             query = "DELETE FROM `%s` WHERE `id` = %d" % (self.table, email_id)
-            logger.debug("[virtual_users::Delete] Query : %s " % query)
+            # logger.debug("[virtual_users::Delete] Query : %s " % query)
             self.con.execute(query)
             self.db.commit()
             return 0
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::Delete] failed %s" % str(e))
+            logger.error("[virtual_users::Delete] failed %s" % str(e))
             return -1
 
     def DeleteDomainUsers(self, domain_id):
-        logger.debug("[virtual_users::DeleteDomainUsers] Domain Id : %d " % domain_id)
+        # logger.debug("[virtual_users::DeleteDomainUsers] Domain Id : %d " % domain_id)
         vuser = virtual_users()
         
         try:
             query = "DELETE FROM `%s` WHERE `domain_id` = %d" % (self.table, domain_id)
-            logger.debug("[virtual_users::DeleteDomainUsers] Query : %s " % query)
+            # logger.debug("[virtual_users::DeleteDomainUsers] Query : %s " % query)
             self.con.execute(query)
             self.db.commit()
             return 0
         except mysql.connector.Error as e:
-            logger.debug("[virtual_users::DeleteDomainUsers] failed %s" % str(e))
+            logger.error("[virtual_users::DeleteDomainUsers] failed %s" % str(e))
+            return None
+
+    def getEmailFromUserId(self, email_id):
+        # logger.debug("[virtual_users::getEmailFromUserId] email Id : %d " % email_id)
+        vuser = virtual_users()
+        
+        try:
+            query = "SELECT  `id`, `domain_id`, `email`, `name` FROM `%s` WHERE `id` = %d " % (self.table, email_id)
+            # logger.debug("[virtual_users::DeleteDomainUsers] Query : %s " % query)
+            self.con.execute(query)
+            return self.db.fetchall()
+        except mysql.connector.Error as e:
+            logger.error("[virtual_users::DeleteDomainUsers] failed %s" % str(e))
             return None
 
 #
@@ -338,7 +355,6 @@ class virtual_aliases:
     def __init__(self):
         self.db = mysql.connector.connect(**dbconfig)
         self.con = self.db.cursor()
-        logger.debug("[virtual_aliases::__init__] INIT" )
 
     def getAliias(self, order = None, where = None):
         try:
@@ -352,6 +368,89 @@ class virtual_aliases:
             self.con.execute(query)    
             return self.con.fetchall()    
         except mysql.connector.Error as e:
-            logger.debug("[virtual_aliases::getAliias] failed")
-            logging.debug('The MySQL database could not be read and returned the following error %s' % str(e))
+            logging.error('The MySQL database could not be read and returned the following error %s' % str(e))
             return []
+
+    def Insert(self, domain_id, source, destination):
+        # logger.debug("[virtual_aliases::Insert] Domain_id : %s , source: %s , destination: %s" % (domain_id, source, destination))
+        # Insert a new record
+        userclass = virtual_users()
+        src = userclass.BuildEmailAddress(domain_id, source)
+        # logger.debug("[virtual_aliases::Insert] Source Address %s " % src)
+
+        dupemail = userclass.checkDuplicateEmail(src)
+
+        # logger.debug("[virtual_aliases::Insert] Is the email not duplicate %s" % dupemail)
+        
+        if not src or dupemail > 0 or not destination:
+            return -1
+        
+        query = "INSERT INTO `%s` (domain_id, source, destination) VALUES (%d, '%s', '%s')" %(self.table, domain_id, src, destination)
+        # logger.debug("[virtual_aliases::Insert] Query : %s " % query)
+        self.con.execute(query)
+        dom_id = self.con.lastrowid
+        self.db.commit()
+        return dom_id
+
+       
+    def Update(self, aid, destination):
+        # logger.debug("[virtual_aliases::Update] alias id : %d updating destination %ss" % (aid, destination))
+        if (aid == 0 or not destination):
+            return -1
+
+        try:
+            query = "UPDATE `%s` SET `destination` = '%s' " % (self.table, destination)
+            query = query + " WHERE `id` = %d " %  aid
+
+            # logger.debug("[virtual_aliases::Update] Query : %s " % query)
+            self.con.execute(query)
+            self.db.commit()
+            return eid
+        except mysql.connector.Error as e:
+            logger.error("[virtual_aliases::Update] failed %s" % str(e))
+            return -1
+
+    def Delete(self, alias_id):
+        # logger.debug("[virtual_aliases::Delete] email Id : %d " % alias_id)
+        vuser = virtual_users()
+        
+        try:
+            query = "DELETE FROM `%s` WHERE `id` = %d" % (self.table, alias_id)
+            # logger.debug("[virtual_aliases::Delete] Query : %s " % query)
+            self.con.execute(query)
+            self.db.commit()
+            return 0
+        except mysql.connector.Error as e:
+            logger.error("[virtual_aliases::Delete] failed %s" % str(e))
+            return -1
+
+
+    def DuplicateAlias(self, alias_source):
+        # logger.debug("[virtual_aliases::DuplicateAlias] name %s " % alias_source)
+        query = "SELECT * FROM `%s` WHERE `source` = '%s' " % (self.table, alias_source)
+        try:
+            # logger.debug("[virtual_aliases::DuplicateAlias] Query : %s" % query)
+            self.con.execute(query)
+            s = self.con.fetchall()
+            numrows = len(s)
+            # logger.debug("[virtual_aliases::DuplicateAlias] rowcount %s" % numrows)
+            return numrows
+        except mysql.connector.Error as e:
+            logger.error("[virtual_aliases::DuplicateAlias] failed %s" % str(e))
+            return False
+
+    def EmailHasAlias(self, alias_destination):
+        # logger.debug("[virtual_aliases::EmailHasAlias] name %s " % alias_destination)
+        query = "SELECT * FROM `%s` WHERE `destination` = '%s' " % (self.table, alias_destination)
+        try:
+            # logger.debug("[virtual_aliases::EmailHasAlias] Query : %s" % query)
+            self.con.execute(query)
+            s = self.con.fetchall()
+            numrows = len(s)
+            # logger.debug("[virtual_aliases::EmailHasAlias] rowcount %s" % numrows)
+            return numrows
+        except mysql.connector.Error as e:
+            logger.error("[virtual_aliases::EmailHasAlias] failed %s" % str(e))
+            return False
+
+    

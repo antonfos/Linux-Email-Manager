@@ -23,13 +23,7 @@
                 </div>
                 <div class="bodyc">
                     <table class="table table-sm">
-                        <tbody id="emaillist">
-                            <!-- {% for r in emails %}
-                            <tr>
-                                <td><a href="javascript:void(0)" class="alink" onclick="emails.getEmail(this.id);" id="{{r[0]}}">{{ r[2] }}</a></td>
-                            </tr>
-                            {% endfor %} -->
-                        </tbody>
+                        <tbody id="emaillist"></tbody>
                     </table>
                 </div>
                 <div class="footerc text-right">
@@ -39,17 +33,6 @@
             </div>
         </div>
         <div class="col-sm-7">
-            <!-- <div>
-                <ul class="nav justify-content-center nav-pills">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="#">Save</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Delete</a>
-                    </li>
-
-                </ul>
-            </div> -->
             <div class="cardc hide" id="form_email">
                 <form action="/savemail" method="POST" class="" onsubmit="emails.submit();" id="email_form">
                     <div class="bodyc">
@@ -76,11 +59,6 @@
                             <input type="password" id="passwd" name="password" class="form-control" placeholder="Email Password">
                         </div>
                     </div>
-                    <!-- <div class="footerc">
-                        <input type="submit" class="btn btn-primary btn-sm" value="Save">
-                        <input type="reset" class="btn btn-warning btn-sm" onclick="emails.clear();" value="Cancel">
-                        <button type="button" class="btn btn-danger btn-sm" onclick="emails.delEmail();" >Delete</button>
-                    </div> -->
 
                     <div class="d-flex flex-row-reverse litgrey">
                         <div class="p-3"><input type="submit" class="btn btn-primary " value="Save"></div>

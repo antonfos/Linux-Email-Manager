@@ -12,11 +12,6 @@ import mysql.connector
 sess = Session()
 sess.init_app(app) 
 
-#===============================================================================
-# Declare Blueprint
-#===============================================================================
-#main = Blueprint('main', __name__ , template_folder="views", static_folder='static')
-
 static_folder ="static"
 template_folder="templates"
 
@@ -29,17 +24,13 @@ logger = logging.getLogger(__name__)
 ################# Authentication ##################
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    # logger.debug("Secret Key : %s" % app.secret_key)
     if request.method == 'GET':
         return render_template('login.html', title='Sign In') 
         
-    #username = request.form['username']
     pwdset = pwdutil()
     pwdok = pwdset.chkSHA512( app.config['ADMIN_PASSWORD'], request.form['password'])
-    if pwdok and request.form['username'] == "admin":
-        user = {"name": "Adminsitrator", "user_id": 0, "admin" : True, "authenticated" : True}
-        logger.debug("Login Successfull %s " % user)
-        logger.debug("Session id %s " % session.sid )
+    if pwdok and request.form['username'] == app.config['ADMIN_USER']:
+        user = {"name": "Adminsitrator", "user_id": 0, app.config['ADMIN_USER'] : True, "authenticated" : True}
         session.permanent = False
         session.clear()
         
@@ -47,15 +38,11 @@ def login():
         session['user_id'] = 0
         session['admin'] = True
         session["authenticated"] = True
-        #session.modified = True
-        logger.debug("[views::login] Session authenticated %s" % session.get('authenticated'))
         return redirect("/")
     
     logger.debug("Login UNSuccessfull Username %s : pass %s, PassOk %s" % (request.form['username'], request.form['password'], pwdok))
     flash("Invaild Login", "error")
     return redirect("/login")
-    #return redirect(url_for('login'))
-    #return render_template('login.html', title='Sign In') 
 
 @app.route('/logout')
 def logout():
@@ -144,20 +131,9 @@ def getDomain(domain_id):
         return jsonify({"status": False, "data": None})
     
 
-    #return json.dumps(domn,  separators=(',',':'))
-
-
-    test = json.dumps(domn)
-    logger.debug("domain test  : %s" % test)
-    #domn = dict(domn)
-    logger.debug("domain type : %s" % type(domn))
-
-    return json.dumps( {"status": True, "data": domn} )
-    
-
 # Domain Form submit
 @app.route('/domain', methods=['POST', 'DELETE'])
-#@user_validated
+@user_validated
 def setDomain():
     IsAjax = request.is_xhr
     vdomain = virtual_domains()
@@ -234,24 +210,19 @@ def Emails():
         return "Template not Found ... "
 
 @app.route('/emails/<int:email_id>', methods=['GET'])
-#@user_validated
+@user_validated
 def GetEmails(email_id):
-    # con = db.cursor()
-    logger.debug("Getting Email list %d", email_id)
+    # logger.debug("Getting Email list %d", email_id)
     if (int(email_id) == 0):
-        #query = "SELECT `id`, `domain_id`, `name`, `email` FROM `virtual_users` ORDER BY email"
         where = None
     else:
-        #query = "SELECT id, `domain_id`, name, email FROM virtual_users WHERE id = %d ORDER BY email" % int(email_id)
         where = " `id` = %d" % int(email_id)
 
     vtable = virtual_users()
 
     try:
         email = vtable.getUsers('email', where)
-        logger.debug("[views::GetEmails] emails : %s" % email)
-        # con.execute(query)
-        # email = con.fetchall()
+        # logger.debug("[views::GetEmails] emails : %s" % email)
         if email :
             return jsonify({"status": True, "data": email})
         else :
@@ -262,7 +233,7 @@ def GetEmails(email_id):
     
 
 @app.route('/email/<int:domain_id>/domain', methods=['GET'])
-#@user_validated
+@user_validated
 def GetEmailByDomain(domain_id):
     logger.debug("Domain ID %s" % domain_id)
     db = mysql.connector.connect(**dbconfig)
@@ -280,11 +251,11 @@ def GetEmailByDomain(domain_id):
         else :
             return jsonify({"status": True, "data": None})
     except:
-        logger.debug("GetEmailsByDomain Error")
+        logger.error("GetEmailsByDomain Error")
         return jsonify({"status": False, "data": None})
 
 @app.route('/savemail', methods=['POST'])
-#@user_validated
+@user_validated
 def setEmail():
     virtuser = virtual_users()
     method = request.form.get('_method', "POST")
@@ -295,19 +266,23 @@ def setEmail():
     password = request.form.get('password', None)
 
     if method == "DELETE":
-        logger.debug("Deleting email id %d" % email_id)
+        # logger.debug("Deleting email id %d" % email_id)
         
         res = virtuser.Delete(email_id)
-        logger.debug("[views::DelEmail] res %d" %res)
+        # logger.debug("[views::DelEmail] res %d" %res)
 
         if res is 0:
             flash("Email Deleted ok", "success")
 
         if res < 0:
             flash("Delete email failed", "error")
+
+        if res > 0:
+            flash("Failed to delete email, there are still %d aliases pointing to this email address" % res, "error")
+
         return redirect("/emails")
 
-    logger.debug("[views::setEmail] Saving email address %s for user %s with password %s (domain: %s)" %(email, name,password, domain_id ) )
+    # logger.debug("[views::setEmail] Saving email address %s for user %s with password %s (domain: %s)" %(email, name,password, domain_id ) )
 
     if (domain_id is 0 or not email or not name):
         logger.debug("[views::setEmail] invalid parameters")
@@ -320,9 +295,9 @@ def setEmail():
             return redirect("/emails")
 
         newemail = virtuser.Insert(domain_id, email, name, password)
-        logger.debug("[views::setEmail] New Email user id %s " % newemail)
+        # logger.debug("[views::setEmail] New Email user id %s " % newemail)
         if (newemail < 0):
-            flash('Email Insert unsuccessfull - Duplicate Email', "error")
+            flash('Email Insert unsuccessfull - Duplicate Email / Alias', "error")
         else:
             flash("Email save successfull", 'success')
         return redirect("/emails")
@@ -353,10 +328,9 @@ def manageAliases():
 
 
 @app.route('/emailsbydomain/<int:domain_id>', methods=['GET'])
-#@user_validated
+@user_validated
 def getEmailsByDomain(domain_id):
-    # con = db.cursor()
-    logger.debug("Getting Email list for domain  %d", domain_id)
+    # logger.debug("Getting Email list for domain  %d", domain_id)
     if domain_id == 0:
         return jsonify({"status": False, "data": None}) 
 
@@ -365,14 +339,83 @@ def getEmailsByDomain(domain_id):
     try:
         emails = vtable.emailsByDomain(domain_id)
         logger.debug("[views::getEmailsByDomain] emails : %s" % emails)
-        # con.execute(query)
-        # email = con.fetchall()
         if emails :
             return jsonify({"status": True, "data": emails})
         else :
             return jsonify({"status": True, "data": None})
     except :
         return jsonify({"status": False, "data": None})
+
+@app.route('/savealias', methods=['POST'])
+@user_validated
+def setAlias():
+    virtalias = virtual_aliases()
+    method = request.form.get('_method', "POST")        # Method (POST / DELETE)
+    alias_id = int(request.form.get('id', 0))           # Alias record ID
+    domain_id = int(request.form.get('domain_id', 0))   # Domain Id
+    source = request.form.get('source', None)           # Email address (Without the domain)
+    destination = request.form.get('destination', None) # Destination Email Address
+    
+
+    if method == "DELETE":
+        logger.debug("Deleting alias id %d" % alias_id)
+        
+        res = virtalias.Delete(alias_id)
+        # logger.debug("[views::Delalias] res %d" %res)
+
+        if res is 0:
+            flash("Alias Deleted ok", "success")
+
+        if res < 0:
+            flash("Delete alias failed", "error")
+        return redirect("/aliases")
+
+    logger.debug("[views::setAlias] Saving alias address %s redirected to  %s for ID: %d (domain: %s)" %(source, destination, alias_id, domain_id ) )
+
+    if (domain_id is 0 or not source or not destination):
+        logger.debug("[views::setAlias] invalid parameters")
+        flash('Alias add unsuccessfull - Invalid / incomplete data', "error")
+        return redirect("/aliases")
+
+    if (alias_id is 0):
+       
+        newalias = virtalias.Insert(domain_id, source, destination)
+        logger.debug("[views::setAlias] New Alias id %s " % newalias)
+        if (newalias < 0):
+            flash('Alias Insert unsuccessfull - Duplicate Alias / Email', "error")
+        else:
+            flash("Alias save successfull", 'success')
+        return redirect("/aliases")
+    elif (alias_id > 0):
+        up = virtalias.Update(alias_id, destination)
+        if (up < 0):
+            flash("Alias Update unsuccessfull ", "error")
+        else :
+            flash("Alias save successfull", 'success')
+            return redirect("/aliases")
+    else :
+        flash("Alias save unsuccessfull!!", 'error')
+        return redirect("/aliases")
+
+@app.route('/fetchalias/<int:alias_id>', methods=['GET'])
+@user_validated
+def fetchAlias(alias_id):
+    # logger.debug("Fetching alias id : %d" % alias_id);
+    virtalias = virtual_aliases()
+    where = None
+
+    if alias_id > 0:
+        where = " id = %d " % alias_id
+
+    aliases = virtalias.getAliias("source", where)
+
+    # logger.debug("[views::fetchAlias] result : %s " % aliases)
+
+    return jsonify({"status": True, "data": aliases })
+    # return virtalias.getAliias("source", where)
+
+
+
 
 @app.route('/test', methods=['GET'])
 @user_validated
