@@ -1,0 +1,96 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Emails</li>
+    </ol>
+     <!-- <pre>{{ emails }}</pre>  -->
+    <div class="row">
+        <div class="col-sm-5">
+            <div class="cardc">
+                <div class="headingcd">Email Accounts</div>
+                <div class="bodyc">
+                    <div class="form-group" style="margin-bottom: 10px;">
+                            <label for="email">Domain</label>
+                            <select id="seldomain" class="form-control" onchange="emails.setDomain(this.value);">
+                                <option value="0">All</option>
+                                {% for d in domn %}
+                                    <option value="{{d[0]}}">{{d[1]}}</option>
+                                {% endfor %}
+                            </select>
+                            <hr>
+                        </div>
+                </div>
+                <div class="bodyc">
+                    <table class="table table-sm">
+                        <tbody id="emaillist">
+                            <!-- {% for r in emails %}
+                            <tr>
+                                <td><a href="javascript:void(0)" class="alink" onclick="emails.getEmail(this.id);" id="{{r[0]}}">{{ r[2] }}</a></td>
+                            </tr>
+                            {% endfor %} -->
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footerc text-right">
+                    <a href="javascript:void(0)" onclick="emails.newemail();" class="btn btn-default btn-sm">Add Email</a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-7">
+            <!-- <div>
+                <ul class="nav justify-content-center nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Save</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Delete</a>
+                    </li>
+
+                </ul>
+            </div> -->
+            <div class="cardc hide" id="form_email">
+                <form action="/savemail" method="POST" class="" onsubmit="emails.submit();" id="email_form">
+                    <div class="bodyc">
+                         <input type="hidden" name="_method" id="_method" value="POST" />
+                         <input type="hidden" name="id" id="id" value="0" /> 
+                         <input type="hidden" name="domain_id" id="domain_id" value="0" /> 
+
+                        <div class="form-group">
+                            <label for="email" >Email Address</label>
+                            <div class="input-group mb-2 mr-sm-2 mb-sm-0">
+                                
+                                <input type="text" id="email" name="email" class="form-control" placeholder="email without the domain">
+                                <div class="input-group-addon">@</div>
+                                <div class="input-group-addon" id="emaildomain">No Domain Selected</div>
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label for="name">User Name</label>
+                            <input type="text" id="name" name="name" class="form-control" placeholder="user name">
+                        </div>
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label for="passwd">Password</label>
+                            <input type="password" id="passwd" name="password" class="form-control" placeholder="Email Password">
+                        </div>
+                    </div>
+                    <!-- <div class="footerc">
+                        <input type="submit" class="btn btn-primary btn-sm" value="Save">
+                        <input type="reset" class="btn btn-warning btn-sm" onclick="emails.clear();" value="Cancel">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="emails.delEmail();" >Delete</button>
+                    </div> -->
+
+                    <div class="d-flex flex-row-reverse litgrey">
+                        <div class="p-3"><input type="submit" class="btn btn-primary " value="Save"></div>
+                        <div class="p-3"><input type="reset" class="btn btn-warning " onclick="emails.clear();" value="Cancel"></div>
+                        <div class="p-3"><button type="button" class="btn btn-danger" onclick="emails.delEmail();" >Delete</button></div>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

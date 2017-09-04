@@ -1,0 +1,129 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="row">
+    {% if session['authenticated'] %}
+    <div class="col-sm-4">
+        <div class="cardc">
+            <div class="headingcd">{{ domn|length }} Domains</div>
+            <div class="footerc text-right">
+                <a href="/managedomains" class="btn btn-default btn-sm">Manage Domains</a>
+            </div>
+            <div class="bodyc">
+                <table class="table table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <!-- <th>ID</th> -->
+                            <th>Domain</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in domn %}
+                        <tr>
+                            <!-- <td>{{ r[0] }}</td> -->
+                            <td>{{ r[1] }}</td>
+                            <!-- <td>{{ r[2] }}</td> -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+    </div>
+    <div class="col-sm-8">
+        <div class="cardc">
+            <div class="headingcd">{{ emails|length }} Email Addresses</div>
+            <div class="footerc text-right">
+                <a href="/emails" class="btn btn-default btn-sm">Manage Emails</a>
+            </div>
+            <div class="bodyc">
+                <table class="table table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>EMAIL Address</th>
+                            <th>User Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in emails %}
+                        <tr>
+                            <td>{{ r[2] }}</td>
+                            <td>{{ r[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+
+
+        <div class="cardc">
+            <div class="headingcd">{{ alias|length }} Aliases</div>
+            <div class="footerc text-right">
+                <a href="/aliases" class="btn btn-default btn-sm">Manage Aliases</a>
+            </div>
+            <div class="bodyc">
+                <table class="table table-sm">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th>Source</th>
+                            <th>Destination</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in alias %}
+                        <tr>
+                            <td>{{ r[3] }}</td>
+                            <td>{{ r[3] }}</td>
+                            <!-- <td>{{ r[2] }}</td> -->
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+        </div>
+
+    </div>
+    <!-- <div class="col-sm-4">
+        
+    </div> -->
+    {% else %}
+        <div class="col-md-6 offset-md-3">
+            <div class="cardc">
+                <div class="headingcd dgreen">Statistics</div>
+                <div class="bodyc">
+                    <table class="table">
+                        <thead class="vlblue">
+                            <tr>
+                                <th>Section</th>
+                                <th class="text-center">Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for r in alias %}
+                            <tr>
+                                <td>Email Domains</td>
+                                <td class="text-center">{{ domn|length }}</td>
+                            </tr>
+                            <tr>
+                                <td>Email Addresses</td>
+                                <td class="text-center">{{ emails|length }}</td>
+                            </tr>
+                            <tr>
+                                <td>Email Aliases</td>
+                                <td class="text-center">{{ alias|length }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+</div>
+
+
+
+{% endblock content %}

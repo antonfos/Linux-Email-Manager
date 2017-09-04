@@ -1,0 +1,70 @@
+{% extends "base.html" %} {% block content %}
+<div class="container">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="/">Home</a></li>
+        <li class="breadcrumb-item active">Domains</li>
+    </ol>
+    <!-- <pre>{{ domn }}</pre> -->
+    <div class="row">
+        <div class="col-sm-4">
+            <div class="cardc">
+                <div class="headingcd">{{ domn|length }} Domains</div>
+                <div class="bodyc">
+                    <table class="table table-sm">
+                        <tbody>
+                            {% for r in domn %}
+                            <tr>
+                                <td><a href="javascript:void(0)" class="alink" onclick="domains.getDomain(this.id);" id="{{r[0]}}">{{ r[1] }}</a></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="footerc text-right">
+                    <a href="javascript:void(0)" onclick="domains.newDomain();" class="btn btn-default btn-sm">Add Domain</a>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-8">
+            <!-- <div>
+                <ul class="nav justify-content-center nav-pills">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Save</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Delete</a>
+                    </li>
+
+                </ul>
+            </div> -->
+            <div class="cardc hide" id="form_domain">
+                <form action="/domain" method="POST" id="_domain_form">
+                    <div class="bodyc">
+                        <input type="hidden" name="_method" id="_method" value="POST" />
+                         <input type="hidden" name="id" id="id" value="0"> 
+
+                        <div class="form-group" style="margin-bottom: 10px;">
+                            <label for="domain">Domain Name</label>
+                            <input type="text" id="domain" name="name" class="form-control" placeholder="example.com">
+                        </div>
+                    </div>
+
+                    <div class="d-flex flex-row-reverse litgrey">
+                        <div class="p-3"><input type="button" class="btn btn-primary" value="Save" onclick="domains.submit();"></div>
+                        <div class="p-3"><input type="reset" class="btn btn-warning " onclick="domains.clear();" value="Cancel"></div>
+                        <div class="p-3"><button type="button" class="btn btn-danger" onclick="domains.delDomain();" >Delete</button></div>
+                    </div>
+
+                    <!-- <div class="footerc">
+                        <input type="submit" class="btn btn-primary btn-sm" value="Save">
+                        <input type="reset" class="btn btn-warning btn-sm" onclick="domains.clear();" value="Cancel">
+                        <button type="button" class="btn btn-danger btn-sm" onclick="domains.delDomain();" >Delete</button>
+                    </div> -->
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

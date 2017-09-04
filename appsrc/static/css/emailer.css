@@ -1,0 +1,231 @@
+/* 
+    Created on : 05-Jun-2017, 16:48:49
+    Author     : antonf
+*/
+
+/* Color Scheme - Close to Nature */
+.dgreen {background-color: #687864 !important; color: #fff;}
+.blue {background-color: #31708e !important; color: #fff;}
+.lblue {background-color: #5085a5 !important; color: #fff;}
+.vlblue {background-color: #8fc1e3 !important; color: #000;}
+.offwht {background-color: #f7f9fb !important; color: #123456;}
+.litgrey {background-color: #E5E5E5 !important; color: #123456;}
+
+/* Fonts */
+.fontmons {font-family: 'Montserrat', sans-serif;}
+.fontkwave {font-family: 'Knewave', cursive;}
+.fontsans {font-family: 'Open Sans', sans-serif;}
+
+
+html, body {
+    background-color: #f7f9fb;
+    color: #141414;
+    font-family: 'Open Sans', sans-serif;
+    line-height: 1.1em;
+    font-size: 16px;
+    font-weight: 400;
+    margin: 0;
+}
+
+.navbar-prop {
+    background-color: #687864;
+}
+.navbar-prop a {
+    color: #fff;
+}
+
+.navbar-prop a:hover {
+    color: red;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+.flex-center {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+
+.position-ref {
+    position: relative;
+}
+
+.top-right {
+    position: absolute;
+    right: 10px;
+    top: 18px;
+}
+
+
+.h1 {
+    font-size: 60px;
+    /*padding: 10px;*/
+}
+
+.h2 {
+    font-size: 40px;
+    /*padding: 10px;*/
+}
+
+.links > a {
+    color: #fff;
+    padding: 0 25px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .1rem;
+    text-decoration: none;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.links > a:hover {color: #3366FF;}
+
+.m-b-md {
+    margin-bottom: 40px;
+}
+
+.mtop10 {margin-top: 10px;}
+.mtop15 {margin-top: 15px;}
+.mtop20 {margin-top: 20px;}
+.mbot10 {margin-bottom: 10px;}
+.mbot15 {margin-bottom: 15px;}
+.mbot20 {margin-bottom: 20px;}
+
+.pad4 {padding:4px;}
+.pad8 {padding:8px;}
+.pad10 {padding:10px;}
+
+
+.overlay {
+    /*background-color: #3d3d3d;*/
+    opacity: .95;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.writeup {
+    background-color: #f7f9fb;
+    opacity: 1;
+    padding: 10px;
+    border-radius: 5px;
+    color: #123456;
+    z-index: 1000;
+}
+
+.field {
+    margin-top: 2px;
+    padding: 2px;
+}
+
+.feature {
+    display: block;
+    border: 1px solid #CCCCCC;
+    background-color: #f7f9fb;
+    padding: 8px;
+    color: #123456;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.ftrheading {
+    color: #fff;
+    font-weight: 600;
+}
+
+.feature heading {
+    color: #993333;
+    font-size: 1.3em;
+}
+
+.img-descr {
+    margin-top: 10px;
+    /*padding: 4px;*/
+}
+
+.error {
+    color: #cc0000;
+    font-size: .95em;
+    text-align: left;
+    font-weight: 400;
+    font-style: italic;
+}
+.cardc{
+    box-shadow:0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19)!important;
+    border:1px solid #ccc;
+    /*margin-bottom: 8px;*/
+    display: block;
+    margin-top: 5px;
+    margin: 10px auto;
+    width: 100%;
+    background-color: transparent;
+    border: .5px solid #dbdbdb;
+    border-radius: 3px;
+    /*padding: 5px 5px;*/
+    color:#1a1a1a;
+}
+
+.headingc {
+    padding: 5px;
+    width: 100%;
+    background-color: #4d4dcc;
+    text-align: center;
+    font-size: 1.2em;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    /* border-radius: 3px; */
+    color: #fff;  /* #706d6d; */
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.headingcd {
+    padding: 5px;
+    width: 100%;
+    background-color: #4d4dcc;
+    text-align: center;
+    font-size: 1.2em;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    color: #fff;  /* #706d6d; */
+    font-weight: bold;
+    /*text-transform: uppercase;*/
+}
+
+.footerc {
+    padding: 5px;
+    width: 100%;
+    background-color: #e5e5e5;
+    text-align: right;
+    /* font-size: 1.2em; */
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    /* border-radius: 6px; */
+    color: #141414;  /* #706d6d; */
+    font-weight: normal;
+    /*text-transform: uppercase;*/
+}
+
+.bodyc {
+    padding: 5px;
+    width: 100%;
+    background-color: transparent;
+}
+.alink {
+    color: #1255c9;
+    font-weight: 400;
+    font-size: .9em;
+}
+
+.alink:hover {
+    color: #0b236b;
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: .95em;
+}
+
+.hide {
+   visibility: hidden;
+}
