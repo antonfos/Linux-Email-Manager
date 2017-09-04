@@ -17,7 +17,7 @@ class Config(object):
     SESSION_KEY_PREFIX = "MAIL"
     SESSION_FILE_DIR = "sessions/"
     MYSQL_DATABASE_USER = 'mailadmin'
-    MYSQL_DATABASE_PASSWORD = 'H6asaS6HJH6SA6D'
+    MYSQL_DATABASE_PASSWORD = 'hkjahghagdshjgdhj'
     MYSQL_DATABASE_DB = 'mailserver'
     MYSQL_DATABASE_HOST = 'localhost'
     ADMIN_PASSWORD = "$6$badc0e555cfbaf04$NT8vbUdLGed6jT6oDn75W33ho.aHf.1JU95Vior1mxxoKlQe/htpto62n58UvQt0TkR/ySeKc0qury8UlrPSP0"
