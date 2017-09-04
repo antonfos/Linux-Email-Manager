@@ -4,36 +4,39 @@ A small Flask program to manage the MySql database for a Linux Postfix Dovcote m
 ### Database Tables
 #### virtual_domains
 '''
-+-------+-------------+------+-----+---------+----------------+
-| Field | Type        | Null | Key | Default | Extra          |
-+-------+-------------+------+-----+---------+----------------+
-| id    | int(11)     | NO   | PRI | NULL    | auto_increment |
-| name  | varchar(50) | NO   |     | NULL    |                |
-+-------+-------------+------+-----+---------+----------------+
+CREATE TABLE `virtual_domains` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
 '''
 #### virtual_users
 '''
-+-----------+--------------+------+-----+---------+----------------+
-| Field     | Type         | Null | Key | Default | Extra          |
-+-----------+--------------+------+-----+---------+----------------+
-| id        | int(11)      | NO   | PRI | NULL    | auto_increment |
-| domain_id | int(11)      | NO   | MUL | NULL    |                |
-| password  | varchar(106) | NO   |     | NULL    |                |
-| email     | varchar(100) | NO   | UNI | NULL    |                |
-| name      | varchar(100) | NO   |     | NULL    |                |
-+-----------+--------------+------+-----+---------+----------------+
+CREATE TABLE `virtual_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `domain_id` int(11) NOT NULL,
+  `password` varchar(106) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `email` (`email`),
+  KEY `domain_id` (`domain_id`),
+  CONSTRAINT `virtual_users_ibfk_1` FOREIGN KEY (`domain_id`) REFERENCES `virtual_domains` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
 '''
 
 #### virtual_aliases
 '''
-+-------------+--------------+------+-----+---------+----------------+
-| Field       | Type         | Null | Key | Default | Extra          |
-+-------------+--------------+------+-----+---------+----------------+
-| id          | int(11)      | NO   | PRI | NULL    | auto_increment |
-| domain_id   | int(11)      | NO   | MUL | NULL    |                |
-| source      | varchar(100) | NO   |     | NULL    |                |
-| destination | varchar(100) | NO   |     | NULL    |                |
-+-------------+--------------+------+-----+---------+----------------+
+CREATE TABLE `virtual_aliases` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `domain_id` int(11) NOT NULL,
+  `source` varchar(100) NOT NULL,
+  `destination` varchar(100) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `domain_id` (`domain_id`),
+  CONSTRAINT `virtual_aliases_ibfk_1` FOREIGN KEY (`domain_id`) REFERENCES `virtual_domains` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 '''
 
 ## Create a user for the application on MySql 
