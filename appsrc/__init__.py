@@ -7,6 +7,7 @@ import config
 from flask.ext.session import Session
 
 app = Flask(__name__, static_url_path='')
+
 app.config.from_object(config.ProductionConfig)
 # app.secret_key = '\xbbac_\x057\x8d\xe2[E\xd0\xac\xb4[\x98\x18a{\xc3i\xf0\xe7i\x19'
 
